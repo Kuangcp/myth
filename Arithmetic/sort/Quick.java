@@ -1,5 +1,10 @@
 package sort;
-
+/**
+ * 程序有致命错误，值被篡改
+ * @TODO 
+ * @author  Myth
+ * @date 2016年10月29日 下午1:10:36
+ */
 public class Quick {
 	//快速排序：一堆的数组下标越界
 	
@@ -11,7 +16,7 @@ public class Quick {
 		while (left_x<=right_x)
 		{
 			for(;Q[left_x]<pivot;left_x++);//从左边开始查找
-			for(;Q[right_x]>pivot;right_x--);//从右边开始查找
+			for(;Q[right_x]>pivot && right_x>0;right_x--);//从右边开始查找
 			if (left_x<=right_x)//执行交换
 			{
 				if (left_x!=right_x) {int temp = Q[left_x];Q[right_x]=Q[left_x];Q[right_x]=temp;}
