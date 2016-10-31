@@ -14,11 +14,10 @@ import java.util.List;
  * @date 2016年10月29日 下午5:25:14
  */
 public class Shell {
-	public void sort (int [] arr){
+	public static void sort (int [] arr){
 		//如果改变了引用的指向，是对调用者无效的，要改变该引用的内存上的数据
 //		Test.display(arr);
 	
-		Insert insert = new Insert();
 		List<List<Integer>> datalist  = new ArrayList<List<Integer>>();
 		List <Integer> arrs= new ArrayList<Integer>();
 		for (int i=0;i<arr.length;i++){
@@ -52,7 +51,7 @@ public class Shell {
 				for(int h=0;h<dat.size();h++){
 					arrdat[h] = dat.get(h);
 				}
-				insert.sort(arrdat);//直接插入排序
+				Insert.sort(arrdat);//直接插入排序
 				if(d==1){
 					for(int h=0;h<arr.length;h++){
 						arr[h] = arrdat[h];

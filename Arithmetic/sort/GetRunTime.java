@@ -39,6 +39,6 @@ public class GetRunTime {
 			sec = ms/1000;
 			ms-=sec*1000;
 		}
-		System.out.println(s+"\n耗时：<"+waste+"ms>\n格式：<"+hour+"h:"+min+"m:"+sec+"s:"+ms+"ms>");
+		System.out.println(s+"||耗时：<"+waste+"ms>   格式：<"+hour+"h:"+min+"m:"+sec+"s:"+ms+"ms>");
 	}
 }

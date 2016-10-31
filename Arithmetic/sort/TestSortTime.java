@@ -4,30 +4,73 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 全看运气么，艹，有时候能跑，有时候就报错说下标越界，是因为二分法没有检查游标上移的情况
+ * 快速排序法有时候能跑，有时候就报错说下标越界，是因为二分法没有检查游标上移的情况
  * 测试不同的排序方法，比较其各自所费时间
- * 初步实验：当数据是0-100000时
- *                  数据规模6万  冒泡22s，选择21s，插入2s；
- *                  数据规模 8万   冒泡 26s，选择27s，插入6s
- *                  当数据是0-10时
- *                  数据规模10万  冒泡6s，选择44s，插入12s
- *                  0-20
- *                  数据规模是8万 冒泡3s，选择35s，插入8s
- *                  当数据是0-5时
- *                  数据规模    冒泡11s，选择57s，插入24s
+ * 
+ * 实验：
+ * 		数据量是:10000  数据范围是:0~1000
+		##quick     :||耗时：<31ms>   格式：<0h:0m:0s:31ms>
+		##bubble     :||耗时：<641ms>   格式：<0h:0m:0s:641ms>
+		##insert     :||耗时：<145ms>   格式：<0h:0m:0s:145ms>
+		##select     :||耗时：<234ms>   格式：<0h:0m:0s:234ms>
+		##Shell      :||耗时：<453ms>   格式：<0h:0m:0s:453ms>
+		
+		数据量是:10000  数据范围是:0~60
+		##quick     :||耗时：<32ms>   格式：<0h:0m:0s:32ms>
+		##bubble     :||耗时：<547ms>   格式：<0h:0m:0s:547ms>
+		##insert     :||耗时：<125ms>   格式：<0h:0m:0s:125ms>
+		##select     :||耗时：<88ms>   格式：<0h:0m:0s:88ms>
+		##Shell      :||耗时：<156ms>   格式：<0h:0m:0s:156ms>
+		
+		数据量是:10000  数据范围是:0~3
+		##quick     :||耗时：<94ms>   格式：<0h:0m:0s:94ms>
+		##bubble     :||耗时：<468ms>   格式：<0h:0m:0s:468ms>
+		##insert     :||耗时：<94ms>   格式：<0h:0m:0s:94ms>
+		##select     :||耗时：<74ms>   格式：<0h:0m:0s:74ms>
+		##Shell      :||耗时：<312ms>   格式：<0h:0m:0s:312ms>
+		
+		数据量是:10000  数据范围是:0~100000
+		##quick     :||耗时：<32ms>   格式：<0h:0m:0s:32ms>
+		##bubble     :||耗时：<578ms>   格式：<0h:0m:0s:578ms>
+		##insert     :||耗时：<186ms>   格式：<0h:0m:0s:186ms>
+		##select     :||耗时：<578ms>   格式：<0h:0m:0s:578ms>
+		##Shell      :||耗时：<531ms>   格式：<0h:0m:0s:531ms>
+		
+		这种情况下，速度是不确定的要看数据，几乎都是0ms，只有几个算法是需要耗时的
+		数据量是:100  数据范围是:0~10000000
+
  * 初步结论：
- *             冒泡适合处理数据极差大的大量数据，插入适合处理各种数据表现都可以，选择和冒泡差不多
- *             快速排序1秒杀一切。。。。。
+ *             冒泡的速度是稳定的，慢的，
+ *             插入当极差小时速度快
+ *             选择 极差小更快
+ *             Shell是受制于Java的类型转换，实现机制
  *             
  *             急需使用多线程来加速，不然大数据量下的排序实在是太慢了
  */
 public class TestSortTime {
 	
-	static final int MOUNT=200000;//这里来控制数据量大小
-	static final int SCOPE = 1000;//数据范围
-	static final int SORTDATA=5;//参与排序的方法数
-	static final boolean display=false;//是否展示排序前后数据
+	static int MOUNT;//这里来控制数据量大小
+	static int SCOPE;//数据范围
+	static int SORTDATA;//参与排序的方法数
+	static boolean display;//是否展示排序前后数据
 	
+	public static void main(String [] args){
+		TestSortTime.setMOUNT(100);
+		TestSortTime.setSCOPE(10000000);
+		TestSortTime.setSORTDATA(5);
+		TestSortTime.setDisplay(false);
+		
+		System.out.println("数据量是:"+MOUNT+"\n数据范围是:0~"+SCOPE);
+		GetRunTime time = new GetRunTime();
+		List<int []> data = createDat();
+		
+//		display(data.get(0));//展示初始数据
+		TestQuick(data.get(0), time, display);
+		TestBubble(data.get(1), time, display);
+		TestInsert(data.get(2), time, display);
+		TestSelect(data.get(3), time, display);
+		TestShell(data.get(4), time, display);
+	}
 	/**
 	 * 创建一个List，里面的int[] 数据是相同的，但是内存地址不一样
 	 * @return List<int []>
@@ -53,70 +96,50 @@ public class TestSortTime {
 		return data;
 	}
 	
-	public static void main(String [] args){
-		System.out.println("数据量是:"+MOUNT+"\n数据范围是:0~"+SCOPE);
-		GetRunTime time = new GetRunTime();
-		List<int []> data = createDat();
-		
-//		display(data.get(0));
-//		TestQuick(data.get(0), time);
-		TestBubble(data.get(1), time, display);
-		TestInsert(data.get(2), time, display);
-		TestSelect(data.get(3), time, display);
-		TestShell(data.get(4), time, display);
-	}
-	
 	/**测试快速排序*/
 	public static void TestQuick(int [] dat,GetRunTime time,boolean display ){
-		if(display){System.out.print("未排序          ");display(dat);}
+//		if(display){System.out.print("未排序          ");display(dat);}
 		time.Start();
-		Quick quick =new Quick();
-		quick.sort(dat);
+		Quick.sort(dat,0,dat.length-1);
+//		new Quick().quickSort(dat, 0, dat.length-1);
 		time.End("\n##quick     :");
 		if(display){System.out.println("已排序");display(dat);}
 	}
 	/**测试冒泡排序*/
 	public static void TestBubble(int [] dat,GetRunTime time,boolean display ){
-		if(display){System.out.print("未排序          " );display(dat);}
+//		if(display){System.out.print("未排序          " );display(dat);}
 		time.Start();
-		Bubble bubble = new Bubble();
-		
-		bubble.sort(dat); 
-		time.End("\n##insert  time   :");
+		Bubble.sort(dat); 
+		time.End("\n##bubble     :");
 		//for (int i =0;i<dat.length;i++)
 			//System.out.println(dat[i]);
 		if(display){System.out.println("已排序");display(dat);}
 	}
 	/**测试插入排序*/
 	public static void TestInsert(int [] dat,GetRunTime time,boolean display ){
-		if(display){System.out.print("未排序      ");display(dat);}
+//		if(display){System.out.print("未排序      ");display(dat);}
 		time.Start();
-		Insert insert = new Insert();
-		
-		insert.sort(dat);
-		time.End("\n##insert  time   :");
+		Insert.sort(dat);
+		time.End("\n##insert     :");
 		//for (int i =0;i<dat.length;i++)
 			//System.out.println(dat[i]);
 		if(display){System.out.println("已排序");display(dat);}
 	}
 	/**测试选择排序*/
 	public static void TestSelect(int [] dat,GetRunTime time,boolean display ){
-		if(display){System.out.print("未排序     ");display(dat);}
+//		if(display){System.out.print("未排序     ");display(dat);}
 		time.Start();
-		Select select = new Select();
-		
-		select.sort(dat);
+		Select.sort(dat);
 		//for (int i =0;i<dat.length;i++)
 			//System.out.println(dat[i]);
 		time.End("\n##select     :");
 		if(display){System.out.println("已排序");display(dat);}
 	}
 	public static void TestShell(int [] dat,GetRunTime time,boolean display ){
-		if(display){System.out.print("未排序     ");display(dat);}
+//		if(display){System.out.print("未排序     ");display(dat);}
 		time.Start();
-		Shell shell = new Shell();
-		shell.sort(dat);
-		time.End("\n Shell      :");
+		Shell.sort(dat);
+		time.End("\n##Shell      :");
 		if(display){System.out.println("已排序");display(dat);}
 	}
 	public static void display(int [] dat){
@@ -125,7 +148,40 @@ public class TestSortTime {
 //			System.out.println("jk");
 			System.out.print(dat[i]+"|");
 			if(i%46==45) System.out.println();
+//			if(i>100) break;
 		}
+	}
+
+	public static int getMOUNT() {
+		return MOUNT;
+	}
+
+	public static void setMOUNT(int mOUNT) {
+		MOUNT = mOUNT;
+	}
+
+	public static int getSCOPE() {
+		return SCOPE;
+	}
+
+	public static void setSCOPE(int sCOPE) {
+		SCOPE = sCOPE;
+	}
+
+	public static int getSORTDATA() {
+		return SORTDATA;
+	}
+
+	public static void setSORTDATA(int sORTDATA) {
+		SORTDATA = sORTDATA;
+	}
+
+	public static boolean isDisplay() {
+		return display;
+	}
+
+	public static void setDisplay(boolean display) {
+		TestSortTime.display = display;
 	}
 
 }

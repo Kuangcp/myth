@@ -1,9 +1,10 @@
 package sort;
+
 /*
  * 冒泡排序，从小到大
  */
 public class Bubble {
-	public void sort (int [] arr){
+	public static void sort (int [] arr){
 		for (int i=1;i<arr.length-1;i++){//冒泡循环次数
 			for(int j=0;j<arr.length-i;j++){//用来冒泡的语句，0到已排序的部分
 				if(arr[j]>arr[j+1]){//大就交换，把最大的沉入最后

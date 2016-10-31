@@ -4,7 +4,7 @@ package sort;
  * 
  */
 public class Insert {
-	public void  sort(int []arr){
+	public static void  sort(int []arr){
 		int i,j;
 		int data;
 		for (i=1;i<arr.length;i++){
