@@ -1,7 +1,8 @@
 package sort;
 
-/*
+/**
  * 冒泡排序，从小到大
+ * 最坏的情况：O(n^2)
  */
 public class Bubble {
 	public static void sort (int [] arr){
